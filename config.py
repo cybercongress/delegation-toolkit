@@ -1,5 +1,7 @@
 LCD_API = 'https://lcd.bostrom.cybernode.ai'
 
+VALIDATOR_SET = 92
+
 JAILED_WINDOW = 200_000
 NUMBER_OF_JAILS_FOR_KICKOFF = 2
 

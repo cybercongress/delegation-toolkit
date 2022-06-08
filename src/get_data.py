@@ -113,3 +113,16 @@ def get_power(validator_address: str) -> float:
         millivolt = int(millivolt[0]['amount']) / 1000
         power = milliampere * millivolt
     return power
+
+
+def get_delegations(delegator_address: str) -> pd.DataFrame:
+    """
+    Returns dataframe with delegations by a give delegator address
+
+    :param delegator_address:
+    :return delegations:
+    """
+    delegations_raw = requests.get(LCD_API + f'/cosmos/staking/v1beta1/delegations/{delegator_address}').json()
+    delegations_raw = delegations_raw['delegation_responses']
+    delegations = [(d['delegation']['validator_address'], int(d['balance']['amount'])) for d in delegations_raw]
+    return pd.DataFrame(delegations, columns=['operator_address', 'delegation'])

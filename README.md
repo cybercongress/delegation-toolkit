@@ -191,4 +191,22 @@ The result of the script execution is .csv file with pivot table
 
 ## Example calculations
 
-[here](./delegation_strategy.csv) is the result of script execution for 2022-05-17
+[Here](./delegation_strategy.csv) is the result of script execution for 2022-05-17.
+
+## Signing transactions with the multisig
+You can learn how multisig works by CLI in the [guide](https://github.com/cybercongress/go-cyber/blob/main/docs/multisig_guide.md), 
+below are examples regarding transactions of this repository.
+
+1. Sign transaction from multisig participants
+```bash
+cyber tx sign txs/unsigned_0.json --multisig=$MULTISIG_NAME --from=$WALLET_NAME --output-document=txs/signed_0_1.json --chain-id=bostrom --node https://rpc.bostrom.cybernode.ai:443
+```
+2. Create combined multisig transaction
+```bash
+cyber tx multisign txs/unsigned_0.json $MULTISIG_NAME txs/signed_0_1.json txs/signed_0_2.json --chain-id=bostrom --node https://rpc.bostrom.cybernode.ai:443 &> txs/signed_combined_0.json
+```
+3. Broadcast transaction
+```bash
+cyber tx broadcast txs/signed_combined_0.json --chain-id=bostrom --node https://rpc.bostrom.cybernode.ai:443 --broadcast-mode block
+```
+        

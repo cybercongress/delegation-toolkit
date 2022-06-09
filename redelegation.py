@@ -2,7 +2,6 @@ import os
 import shutil
 import pandas as pd
 
-
 from src.get_data import get_delegations
 from config import DELEGATOR_ADDRESS
 from main import get_result_table
@@ -10,7 +9,7 @@ from src.utils import redelegation_balancer
 from src.tx import get_unsigned_redelegation_txs
 
 
-def redelegate():
+def redelegate() -> None:
     """
     Processes redelegation strategy
 
@@ -41,6 +40,5 @@ def redelegate():
     get_unsigned_redelegation_txs(DELEGATOR_ADDRESS, balanced_df)
 
 
-redelegate()
-
-
+if __name__ == '__main__':
+    redelegate()

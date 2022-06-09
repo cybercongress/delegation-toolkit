@@ -9,8 +9,8 @@ The toolkit should help distribute multisig tokens in the correct way and to aut
 The result of the tool execution is a pivot table with all calculations in detail and unsigned transaction files for signing and broadcasting.
 
 ## Criteria
-
-The allocation of the delegation strategy programm is 92 TBOOT.
+![Criteria](src/criteria.png)
+The allocation of the delegation strategy program is 92 TBOOT.
 
 ```python
 ALLOCATION = 92_000_000_000_000
@@ -183,7 +183,7 @@ The result of the script execution is .csv file with pivot table
 
 5. Kicks off heroes from the `BLACK_LIST`
 
-6. Calculates endorsments and sorts heroes descending by total
+6. Calculates endorsements and sorts heroes descending by total
 
 7. Saves pivot table in `./delegation_strategy.csv`
 

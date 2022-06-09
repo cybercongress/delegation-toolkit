@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+
 from config import MSGS_IN_TX, GAS_LIMIT, MEMO
 
 
@@ -127,7 +128,7 @@ def get_unsigned_redelegation_tx(
 
 def get_unsigned_delegation_txs(
         delegator_address: str,
-        df: pd.DataFrame):
+        df: pd.DataFrame) -> None:
     """
     Pack by MSGS_IN_TX messages and save transaction files in ./txs/
 
@@ -151,7 +152,7 @@ def get_unsigned_delegation_txs(
 
 def get_unsigned_redelegation_txs(
         delegator_address: str,
-        df: pd.DataFrame):
+        df: pd.DataFrame) -> None:
     """
     Pack by MSGS_IN_TX messages and save transaction files in ./txs/
 

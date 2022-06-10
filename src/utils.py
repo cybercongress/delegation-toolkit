@@ -1,6 +1,7 @@
 import base64
 import bech32
 import pandas as pd
+
 from config import REDELEGATION_NUMBER
 
 

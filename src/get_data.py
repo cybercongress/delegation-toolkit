@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 from tqdm import tqdm
 
-
 from cyberpy._wallet import address_to_address
 from config import LCD_API, JAILED_WINDOW
 

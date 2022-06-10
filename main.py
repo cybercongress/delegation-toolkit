@@ -1,5 +1,6 @@
 import os
 import shutil
+import pandas as pd
 
 from config import BLACK_LIST, NUMBER_OF_JAILS_FOR_KICKOFF, DELEGATOR_ADDRESS
 from src.calculations import calculate_endorsement
@@ -8,7 +9,7 @@ from src.tx import get_unsigned_delegation_txs
 from src.utils import clean_up_validators_set
 
 
-def get_result_table():
+def get_result_table() -> pd.DataFrame:
     """
     1. Gets validators info
     2. Sorts validators by staked tokens descending and ranks them in validator_rank column
@@ -22,7 +23,7 @@ def get_result_table():
     return calculate_endorsement(validators_df)
 
 
-def processor():
+def processor() -> None:
     """
     Processes delegation strategy.
     1. Gets result table

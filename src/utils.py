@@ -48,46 +48,21 @@ def redelegation_balancer(validators_df: pd.DataFrame) -> pd.DataFrame:
     :param validators_df:
     :return rebalanced_df:
     """
-    data = []
     df = validators_df.copy(deep=True)
-    for x in range(REDELEGATION_NUMBER):
+    data = []
+    for _ in range(REDELEGATION_NUMBER):
+        if df['diff'].min() > 0 or df['diff'].max() < 0:
+            break
         min_diff_row = list(df.loc[df['diff'] == df['diff'].min()].index)[0]
         max_diff_row = list(df.loc[df['diff'] == df['diff'].max()].index)[0]
-        if abs(df['diff'].loc[min_diff_row]) >= abs(df['diff'].loc[max_diff_row]):
-            diff = abs(df['diff'].loc[max_diff_row])
-            temp = (
-                df['operator_address'].loc[min_diff_row],
-                df['operator_address'].loc[max_diff_row],
-                int(diff)
-            )
-            df = set_value(df, min_diff_row, 'diff', df['diff'].loc[min_diff_row] + diff)
-            df = set_value(df, max_diff_row, 'diff', df['diff'].loc[max_diff_row] - diff)
-        else:
-            diff = abs(df['diff'].loc[min_diff_row])
-            temp = (
-                df['operator_address'].loc[min_diff_row],
-                df['operator_address'].loc[max_diff_row],
-                int(diff)
-            )
-            df = set_value(df, min_diff_row, 'diff', df['diff'].loc[min_diff_row] + diff)
-            df = set_value(df, max_diff_row, 'diff', df['diff'].loc[max_diff_row] - diff)
-        data.append(temp)
+
+        diff = min(abs(df.loc[min_diff_row, 'diff']), abs(df.loc[max_diff_row, 'diff']))
+        df.loc[min_diff_row, 'diff'] += diff
+        df.loc[max_diff_row, 'diff'] -= diff
+        data_item = (
+            df.loc[min_diff_row, 'operator_address'],
+            df.loc[max_diff_row, 'operator_address'],
+            int(diff)
+        )
+        data.append(data_item)
     return pd.DataFrame(data, columns=['source_validator', 'dist_validator', 'amount'])
-
-
-def set_value(
-        df: pd.DataFrame,
-        index: int,
-        column: str,
-        value) -> pd.DataFrame:
-    """
-    Sets a given value by given index and column name in a given df
-
-    :param df:
-    :param index:
-    :param column:
-    :param value:
-    :return updated_df:
-    """
-    df.loc[index, column] = value
-    return df

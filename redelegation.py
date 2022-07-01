@@ -3,7 +3,7 @@ import shutil
 import pandas as pd
 
 from src.get_data import get_delegations
-from config import DELEGATOR_ADDRESS
+from config import DELEGATOR_ADDRESS, NEW_STAKE_AMOUNT, NEW_STAKE_HERO
 from main import get_result_table
 from src.utils import redelegation_balancer
 from src.tx import get_unsigned_redelegation_txs
@@ -26,6 +26,8 @@ def redelegate() -> None:
     validators_df_raw = validators_df_raw[['operator_address', 'delegation', 'total']]
     validators_df = validators_df_raw.copy().fillna(0)
     validators_df = validators_df.rename(columns={'delegation': 'current_delegation', 'total': 'calculated_delegation'})
+    validators_df.loc[validators_df[validators_df['operator_address'] == NEW_STAKE_HERO].index,
+                      'current_delegation'] += NEW_STAKE_AMOUNT
     validators_df['diff'] = validators_df['calculated_delegation'] - validators_df['current_delegation']
     validators_df = validators_df.sort_values(by='diff', ascending=False)
     validators_df.to_csv('./redelegation_strategy.csv')

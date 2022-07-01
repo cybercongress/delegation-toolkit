@@ -166,7 +166,7 @@ pip3 install -r requirements.txt
 2. Run script
 
 ```bash
-python3 main.py
+python3 redelegation.py
 ```
 
 The result of the script execution is .csv file with pivot table

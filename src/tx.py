@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-from config import MSGS_IN_TX, GAS_LIMIT, MEMO
+from config import MSGS_IN_TX, GAS_LIMIT, MEMO, INITIAL_SEQUENCE
 
 
 def get_tx(
@@ -142,10 +142,10 @@ def get_unsigned_delegation_txs(
             delegator_address,
             df[c: c + MSGS_IN_TX].operator_address.to_list(),
             df[c: c + MSGS_IN_TX].total.to_list())
-        if tx['body']['messages'] == []:
+        if not tx['body']['messages']:
             continue
         else:
-            with open(f"./txs/unsigned_{i}.json", "w") as fp:
+            with open(f"./txs/{INITIAL_SEQUENCE + i}_unsigned_delegation_{i}.json", "w") as fp:
                 json.dump(tx, fp, indent=4)
             c += MSGS_IN_TX
 
@@ -170,8 +170,6 @@ def get_unsigned_redelegation_txs(
         if not tx['body']['messages']:
             continue
         else:
-            with open(f"./txs/unsigned_{i}.json", "w") as fp:
+            with open(f"./txs/{INITIAL_SEQUENCE + i}_unsigned_redelegation_{i}.json", "w") as fp:
                 json.dump(tx, fp, indent=4)
             c += MSGS_IN_TX
-
-

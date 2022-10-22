@@ -1,5 +1,4 @@
 import os
-import shutil
 import pandas as pd
 
 from src.get_data import get_delegations
@@ -35,10 +34,9 @@ def redelegate() -> None:
     balanced_df.to_csv('./rebalanced_table.csv')
     balanced_df.sort_values(by='amount')
     try:
-        shutil.rmtree('./txs')
-    except OSError as e:
-        print("Error: %s : %s" % ('./txs', e.strerror))
-    os.mkdir('./txs')
+        os.mkdir('./txs')
+    except OSError:
+        pass
     get_unsigned_redelegation_txs(DELEGATOR_ADDRESS, balanced_df)
 
 

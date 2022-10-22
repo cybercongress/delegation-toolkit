@@ -1,5 +1,4 @@
 import os
-import shutil
 import pandas as pd
 
 from config import BLACK_LIST, NUMBER_OF_JAILS_FOR_KICKOFF, DELEGATOR_ADDRESS
@@ -37,10 +36,9 @@ def processor() -> None:
     validators_df.to_csv('./delegation_strategy.csv', index=False)
     validators_df = validators_df.sort_values(by=['total']).reset_index(drop=True)
     try:
-        shutil.rmtree('./txs')
-    except OSError as e:
-        print("Error: %s : %s" % ('./txs', e.strerror))
-    os.mkdir('./txs')
+        os.mkdir('./txs')
+    except OSError:
+        pass
     get_unsigned_delegation_txs(DELEGATOR_ADDRESS, validators_df)
 
 

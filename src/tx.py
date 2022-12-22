@@ -50,14 +50,14 @@ def get_delegation_msg(
     :return message:
     """
     return {
-                "@type": "/cosmos.staking.v1beta1.MsgDelegate",
-                "delegator_address": delegator_address,
-                "validator_address": validator_address,
-                "amount": {
-                    "denom": "boot",
-                    "amount": str(amount)
-                }
-            }
+        "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+        "delegator_address": delegator_address,
+        "validator_address": validator_address,
+        "amount": {
+            "denom": "boot",
+            "amount": str(amount)
+        }
+    }
 
 
 def get_redelegation_message(
@@ -75,15 +75,15 @@ def get_redelegation_message(
     :return redelegation_message:
     """
     return {
-                "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-                "delegator_address": delegator_address,
-                "validator_src_address": source_validator,
-                "validator_dst_address": dist_validator,
-                "amount": {
-                    "denom": "boot",
-                    "amount": str(amount)
-                }
-            }
+        "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+        "delegator_address": delegator_address,
+        "validator_src_address": source_validator,
+        "validator_dst_address": dist_validator,
+        "amount": {
+            "denom": "boot",
+            "amount": str(amount)
+        }
+    }
 
 
 def get_unsigned_delegation_tx(
@@ -128,48 +128,56 @@ def get_unsigned_redelegation_tx(
 
 def get_unsigned_delegation_txs(
         delegator_address: str,
-        df: pd.DataFrame) -> None:
+        delegation_df: pd.DataFrame,
+        initial_sequence: int = INITIAL_SEQUENCE) -> int:
     """
     Pack by MSGS_IN_TX messages and save transaction files in ./txs/
 
-    :param delegator_address:
-    :param df:
+    :param delegator_address: delegator address
+    :param delegation_df: dataframe with operator_address and total columns
+    :param initial_sequence: initial sequence for transactions
+    :return next sequence
     """
-    counter = df.shape[0] // MSGS_IN_TX + 1
+    counter = delegation_df.shape[0] // MSGS_IN_TX + 1
     c = 0
     for i in range(counter):
         tx = get_unsigned_delegation_tx(
             delegator_address,
-            df[c: c + MSGS_IN_TX].operator_address.to_list(),
-            df[c: c + MSGS_IN_TX].total.to_list())
+            delegation_df[c: c + MSGS_IN_TX].operator_address.to_list(),
+            delegation_df[c: c + MSGS_IN_TX].total.to_list())
         if not tx['body']['messages']:
             continue
         else:
-            with open(f"./txs/{INITIAL_SEQUENCE + i}_unsigned_delegation_{i}.json", "w") as fp:
+            with open(f"./txs/{initial_sequence + i}_unsigned_delegation_{i}.json", "w") as fp:
                 json.dump(tx, fp, indent=4)
             c += MSGS_IN_TX
+    return initial_sequence + counter
 
 
 def get_unsigned_redelegation_txs(
         delegator_address: str,
-        df: pd.DataFrame) -> None:
+        redelegations_df: pd.DataFrame,
+        initial_sequence: int = INITIAL_SEQUENCE) -> int:
     """
     Pack by MSGS_IN_TX messages and save transaction files in ./txs/
 
-    :param delegator_address:
-    :param df:
+    :param delegator_address: delegator address
+    :param redelegations_df: dataframe with operator_address and total columns
+    :param initial_sequence: initial sequence for transactions
+    :return next sequence
     """
-    counter = df.shape[0] // MSGS_IN_TX + 1
+    counter = redelegations_df.shape[0] // MSGS_IN_TX + 1
     c = 0
     for i in range(counter):
         tx = get_unsigned_redelegation_tx(
             delegator_address,
-            df[c: c + MSGS_IN_TX].source_validator.to_list(),
-            df[c: c + MSGS_IN_TX].dist_validator.to_list(),
-            df[c: c + MSGS_IN_TX].amount.to_list())
+            redelegations_df[c: c + MSGS_IN_TX].source_validator.to_list(),
+            redelegations_df[c: c + MSGS_IN_TX].dist_validator.to_list(),
+            redelegations_df[c: c + MSGS_IN_TX].amount.to_list())
         if not tx['body']['messages']:
             continue
         else:
-            with open(f"./txs/{INITIAL_SEQUENCE + i}_unsigned_redelegation_{i}.json", "w") as fp:
+            with open(f"./txs/{initial_sequence + i}_unsigned_redelegation_{i}.json", "w") as fp:
                 json.dump(tx, fp, indent=4)
             c += MSGS_IN_TX
+    return initial_sequence + counter

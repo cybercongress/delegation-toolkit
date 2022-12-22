@@ -8,11 +8,17 @@ NUMBER_OF_JAILS_FOR_KICKOFF = 2
 
 MSGS_IN_TX = 3
 GAS_LIMIT = 1_000_000
-INITIAL_SEQUENCE = 102
+INITIAL_SEQUENCE = 115
 
-ALLOCATION = 100_000_000_000_000
-NEW_STAKE_AMOUNT = 0
-NEW_STAKE_HERO = 'bostromvaloper1ccvpcq9ffy0qd2ca8nmmpzfamtyjfc9zt56fhc'
+ALLOCATION = 121_000_000_000_000
+# stake coins to heroes when allocation increased
+NEW_STAKE_HERO_DICT = {
+        'bostromvaloper135ca8hdpy9sk0ntwqzpzsvatyl48ptx52tn60p': 6_036_367_711_512,
+        'bostromvaloper1r28nhrkwcvqs4qss2l7zqdvc2qfdl8arglv6nn': 5_694_238_171_764,
+        'bostromvaloper1uvkv59tsqqugezwq2gn2pytz8uzk2uy4h8wz6x': 2_950_198_121_237,
+        'bostromvaloper1gdpk4xeyeqzdkdwc0c2zrd8ltrthnze30rn2ue': 2_805_243_993_978,
+        'bostromvaloper1njsr8tngxtygsc73mrtn5738ztkzqy7cx7egpg': 2_438_573_556_653,
+        'bostromvaloper1ngymhfhty76w8r6e8dlyvj68g5zfm09q2p7dmn': 1_127_196_602_568}
 
 COST_OPTIMIZATION = 0.30
 DECENTRALIZATION = 0.20

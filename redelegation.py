@@ -2,10 +2,10 @@ import os
 import pandas as pd
 
 from src.get_data import get_delegations
-from config import DELEGATOR_ADDRESS, NEW_STAKE_AMOUNT, NEW_STAKE_HERO
+from config import DELEGATOR_ADDRESS, NEW_STAKE_HERO_DICT
 from main import get_result_table
 from src.utils import redelegation_balancer
-from src.tx import get_unsigned_redelegation_txs
+from src.tx import get_unsigned_redelegation_txs, get_unsigned_delegation_txs
 
 
 def redelegate() -> None:
@@ -25,8 +25,9 @@ def redelegate() -> None:
     validators_df_raw = validators_df_raw[['operator_address', 'delegation', 'total']]
     validators_df = validators_df_raw.copy().fillna(0)
     validators_df = validators_df.rename(columns={'delegation': 'current_delegation', 'total': 'calculated_delegation'})
-    validators_df.loc[validators_df[validators_df['operator_address'] == NEW_STAKE_HERO].index,
-                      'current_delegation'] += NEW_STAKE_AMOUNT
+    for new_stake_hero_address, new_stake_hero_amount in NEW_STAKE_HERO_DICT.items():
+        validators_df.loc[validators_df[validators_df['operator_address'] == new_stake_hero_address].index,
+                          'current_delegation'] += new_stake_hero_amount
     validators_df['diff'] = validators_df['calculated_delegation'] - validators_df['current_delegation']
     validators_df = validators_df.sort_values(by='diff', ascending=False)
     validators_df.to_csv('./redelegation_strategy.csv')
@@ -37,7 +38,11 @@ def redelegate() -> None:
         os.mkdir('./txs')
     except OSError:
         pass
-    get_unsigned_redelegation_txs(DELEGATOR_ADDRESS, balanced_df)
+    sequence = get_unsigned_redelegation_txs(delegator_address=DELEGATOR_ADDRESS, redelegations_df=balanced_df)
+    get_unsigned_delegation_txs(delegator_address=DELEGATOR_ADDRESS,
+                                delegation_df=pd.DataFrame(NEW_STAKE_HERO_DICT.items(),
+                                                           columns=['operator_address', 'total']),
+                                initial_sequence=sequence)
 
 
 if __name__ == '__main__':

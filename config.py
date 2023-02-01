@@ -6,13 +6,18 @@ REDELEGATION_NUMBER = 32
 JAILED_WINDOW = 200_000
 NUMBER_OF_JAILS_FOR_KICKOFF = 2
 
-MSGS_IN_TX = 3
-GAS_LIMIT = 1_000_000
-INITIAL_SEQUENCE = 128
+MSGS_IN_TX = 5
+GAS_LIMIT = 1_500_000
+INITIAL_SEQUENCE = 147
 
-ALLOCATION = 121_000_000_000_000
+ALLOCATION = 136_700_000_000_000
 # stake coins to heroes when allocation increased
-NEW_STAKE_HERO_DICT = {}
+NEW_STAKE_HERO_DICT = {
+        'bostromvaloper135ca8hdpy9sk0ntwqzpzsvatyl48ptx52tn60p': 5625069603867,
+        'bostromvaloper1r28nhrkwcvqs4qss2l7zqdvc2qfdl8arglv6nn': 5302226350330,
+        'bostromvaloper1s6v5ragv9gg3sq7j3aeqtyy82uaxv3y0vd9g8y': 3090269271094,
+        'bostromvaloper1fvh29xlzzatu390p3lpe7uhdsl7dpffct9pjqr': 2682434774709
+}
 
 COST_OPTIMIZATION = 0.30
 DECENTRALIZATION = 0.20

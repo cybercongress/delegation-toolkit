@@ -8,7 +8,7 @@ from config import REDELEGATION_NUMBER
 def b64_to_cons(cons: str) -> str:
     """
     Converts hex representation of validator's node consensus public key
-    to human readable bech32 with bostromvalconspub prefix
+    to human-readable bech32 with bostromvalconspub prefix
 
     :param cons:
     :return bostromvalconspub_address:

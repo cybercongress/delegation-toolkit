@@ -79,8 +79,9 @@ def get_jailed_times(
     :param min_height:
     :return jailed_times:
     """
-    url = LCD_API \
-          + f'/txs?message.action=%2Fcosmos.slashing.v1beta1.MsgUnjail&message.sender={address}&limit=1000&tx.minheight={min_height}'
+    url = LCD_API + \
+          f'/txs?message.action=%2Fcosmos.slashing.v1beta1.MsgUnjail' \
+          f'&message.sender={address}&limit=1000&tx.minheight={min_height}'
     res = requests.get(url).json()
     if 'txs' in res.keys():
         return len(res['txs'])
@@ -121,7 +122,8 @@ def get_delegations(delegator_address: str) -> pd.DataFrame:
     :param delegator_address:
     :return delegations:
     """
-    delegations_raw = requests.get(LCD_API + f'/cosmos/staking/v1beta1/delegations/{delegator_address}').json()
+    delegations_raw = \
+        requests.get(LCD_API + f'/cosmos/staking/v1beta1/delegations/{delegator_address}?pagination.limit=1000').json()
     delegations_raw = delegations_raw['delegation_responses']
     delegations = [(d['delegation']['validator_address'], int(d['balance']['amount'])) for d in delegations_raw]
     return pd.DataFrame(delegations, columns=['operator_address', 'delegation'])

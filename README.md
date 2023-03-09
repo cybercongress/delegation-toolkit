@@ -10,7 +10,7 @@ The result of the tool execution is a pivot table with all calculations in detai
 
 ## Criteria
 ![Criteria](src/criteria.png)
-The allocation of the delegation strategy program is 121 TBOOT.
+The allocation of the delegation strategy program is 135 TBOOT.
 
 ```python
 ALLOCATION = 135_000_000_000_000

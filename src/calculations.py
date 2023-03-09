@@ -13,17 +13,16 @@ def get_cost_optimization(commission: float) -> float:
     :return cost_optimization:
     """
     if 0.01 <= commission <= 0.10:
-        return 1 / (commission**2)
+        return 1 / (commission ** 2)
     else:
         return 0.0
 
 
 def get_cost_optimization_endorsement(
         cost_optimization: float,
-        cost_optimization_sum: float,
-        ) -> int:
+        cost_optimization_sum: float) -> int:
     """
-    Calculates cost_optimization_endorsment value
+    Calculates cost_optimization_endorsement value
     by validator's cost_optimization value as share of cost_optimization_sum
 
     :param cost_optimization:
@@ -59,7 +58,7 @@ def get_decentralization_endorsement(
 
 def get_confidence(ownership: float) -> float:
     """
-    Calculates confidence value based on validators ownership(self_delegated) value
+    Calculates confidence value based on validator's ownership (self_delegated) value
 
     :param ownership:
     :return confidence:
@@ -153,28 +152,47 @@ def calculate_endorsement(validators_df: pd.DataFrame) -> pd.DataFrame:
     :param validators_df:
     :return validators_df:
     """
-    validators_df['cost_optimization'] = validators_df.apply(lambda x: get_cost_optimization(x['greed']), axis=1)
-    validators_df['cost_endorsement'] = validators_df.apply(
-        lambda x: get_cost_optimization_endorsement(x['cost_optimization'], validators_df['cost_optimization'].sum()), axis=1)
-    validators_df['decentralization'] = validators_df.apply(
-        lambda x: get_decentralization(x['validator_rank']), axis=1)
-    validators_df['decentralization_endorsement'] = validators_df.apply(
-        lambda x: get_decentralization_endorsement(x['decentralization'], validators_df['decentralization'].sum()), axis=1)
-    validators_df['confidence'] = validators_df.apply(
-        lambda x: get_confidence(x['ownership']), axis=1)
-    validators_df['confidence_endorsement'] = validators_df.apply(
-        lambda x: get_confidence_endorsement(x['confidence'], validators_df['confidence'].sum()), axis=1)
-    validators_df['superintelligence'] = validators_df.apply(
-        lambda x: get_superintelligence(x['power']), axis=1)
-    validators_df['superintelligence_endorsement'] = validators_df.apply(
-        lambda x: get_superintelligence_endorsement(x['superintelligence'], validators_df['superintelligence'].sum()), axis=1)
-    validators_df['reliability'] = validators_df.apply(
-        lambda x: get_reliability(x['jailed_times_100_000'], x['staked'], x['delegator_shares']), axis=1)
-    validators_df['reliability_endorsement'] = validators_df.apply(
-        lambda x: get_reliability_endorsement(x['reliability'], validators_df['reliability'].sum()), axis=1)
-    validators_df['total'] = validators_df['cost_endorsement'] + validators_df['decentralization_endorsement'] + \
-                         validators_df['confidence_endorsement'] + validators_df['reliability_endorsement'] + \
-                         validators_df['superintelligence_endorsement']
+    validators_df.loc[:, 'cost_optimization'] = validators_df.apply(
+        lambda x: get_cost_optimization(commission=x['greed']),
+        axis=1)
+    validators_df.loc[:, 'cost_endorsement'] = validators_df.apply(
+        lambda x: get_cost_optimization_endorsement(cost_optimization=x['cost_optimization'],
+                                                    cost_optimization_sum=validators_df['cost_optimization'].sum()),
+        axis=1)
+    validators_df.loc[:, 'decentralization'] = validators_df.apply(
+        lambda x: get_decentralization(rank=x['validator_rank']),
+        axis=1)
+    validators_df.loc[:, 'decentralization_endorsement'] = validators_df.apply(
+        lambda x: get_decentralization_endorsement(decentralization=x['decentralization'],
+                                                   decentralization_sum=validators_df['decentralization'].sum()),
+        axis=1)
+    validators_df.loc[:, 'confidence'] = validators_df.apply(
+        lambda x: get_confidence(ownership=x['ownership']),
+        axis=1)
+    validators_df.loc[:, 'confidence_endorsement'] = validators_df.apply(
+        lambda x: get_confidence_endorsement(confidence=x['confidence'],
+                                             confidence_sum=validators_df['confidence'].sum()),
+        axis=1)
+    validators_df.loc[:, 'superintelligence'] = validators_df.apply(
+        lambda x: get_superintelligence(power=x['power']),
+        axis=1)
+    validators_df.loc[:, 'superintelligence_endorsement'] = validators_df.apply(
+        lambda x: get_superintelligence_endorsement(superintelligence=x['superintelligence'],
+                                                    superintelligence_sum=validators_df['superintelligence'].sum()),
+        axis=1)
+    validators_df.loc[:, 'reliability'] = validators_df.apply(
+        lambda x: get_reliability(jails=x['jailed_times_100_000'],
+                                  staked=x['staked'],
+                                  delegator_shares=x['delegator_shares']),
+        axis=1)
+    validators_df.loc[:, 'reliability_endorsement'] = validators_df.apply(
+        lambda x: get_reliability_endorsement(reliability=x['reliability'],
+                                              reliability_sum=validators_df['reliability'].sum()),
+        axis=1)
+    validators_df.loc[:, 'total'] = \
+        validators_df['cost_endorsement'] + validators_df['decentralization_endorsement'] + \
+        validators_df['confidence_endorsement'] + validators_df['reliability_endorsement'] + \
+        validators_df['superintelligence_endorsement']
     validators_df = validators_df.sort_values(by=['total'], ascending=False).reset_index(drop=True)
     return rebalance_to_set(validators_df, VALIDATOR_SET)
 
@@ -195,6 +213,6 @@ def rebalance_to_set(
         tokens_to_rebalance = validators_df[validator_set:]['total'].sum()
         validators_df = validators_df[:validator_set]
         tokens_total = validators_df['total'].sum()
-        validators_df['total'] = validators_df['total'] + validators_df['total'] / tokens_total * tokens_to_rebalance
+        validators_df.loc[:, 'total'] = \
+            validators_df['total'] + validators_df['total'] / tokens_total * tokens_to_rebalance
         return validators_df
-

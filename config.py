@@ -8,7 +8,7 @@ NUMBER_OF_JAILS_FOR_KICKOFF = 2
 
 MSGS_IN_TX = 8
 GAS_LIMIT = 4_000_000
-INITIAL_SEQUENCE = 193
+INITIAL_SEQUENCE = 203
 
 ALLOCATION = 135_000_000_000_000
 # stake coins to heroes when allocation increased
@@ -21,7 +21,7 @@ RELIABILITY = 0.15
 SUPERINTELLIGENCE = 0.15
 
 DELEGATOR_ADDRESS = 'bostrom1xszmhkfjs3s00z2nvtn7evqxw3dtus6yr8e4pw'
-MEMO = ''
+MEMO = 'cyber~congress delegation strategy program https://github.com/cybercongress/delegation-toolkit'
 
 BLACK_LIST = [
         'bostromvaloper1hmkqhy8ygl6tnl5g8tc503rwrmmrkjcqf92r73',  # sta

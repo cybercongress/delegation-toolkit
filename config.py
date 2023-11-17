@@ -1,4 +1,7 @@
+from cyber_sdk.client.lcd import LCDClient
+
 LCD_API = 'https://lcd.bostrom.cybernode.ai'
+LCD_CLIENT = LCDClient("https://lcd.bostrom.cybernode.ai/")
 
 VALIDATOR_SET = 92
 REDELEGATION_NUMBER = 32
@@ -8,7 +11,7 @@ NUMBER_OF_JAILS_FOR_KICKOFF = 2
 
 MSGS_IN_TX = 8
 GAS_LIMIT = 4_000_000
-INITIAL_SEQUENCE = 248
+INITIAL_SEQUENCE = 257
 
 ALLOCATION = 135_000_000_000_000
 # stake coins to heroes when allocation increased

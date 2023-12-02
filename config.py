@@ -11,7 +11,7 @@ NUMBER_OF_JAILS_FOR_KICKOFF = 2
 
 MSGS_IN_TX = 8
 GAS_LIMIT = 4_000_000
-INITIAL_SEQUENCE = 257
+INITIAL_SEQUENCE = None
 
 ALLOCATION = 135_000_000_000_000
 # stake coins to heroes when allocation increased

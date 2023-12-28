@@ -13,7 +13,7 @@ MSGS_IN_TX = 8
 GAS_LIMIT = 4_000_000
 INITIAL_SEQUENCE = None
 
-ALLOCATION = 135_000_000_000_000
+ALLOCATION = 137_420_000_000_000
 # stake coins to heroes when allocation increased
 NEW_STAKE_HERO_DICT = {}
 

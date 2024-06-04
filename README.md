@@ -13,17 +13,18 @@ The result of the tool execution is a pivot table with all calculations in detai
 The allocation of the delegation strategy program is 135 TBOOT.
 
 ```python
-ALLOCATION = 135_000_000_000_000
+ALLOCATION = 137_420_000_000_000
 ```
 
 The criteria shares are:
 
 ```python
-COST_OPTIMIZATION = 0.30
+COST_OPTIMIZATION = 0.20
 DECENTRALIZATION = 0.20
 CONFIDENCE = 0.20
 RELIABILITY = 0.15
 SUPERINTELLIGENCE = 0.15
+PUBLIC_ACTIVITY = 0.10
 ```
 
 ```python
@@ -147,6 +148,27 @@ The distribution is:
 ```python
 def get_reliability_endorsement(reliability, reliability_sum):
     return int((reliability / reliability_sum) * ALLOCATION * RELIABILITY)
+```
+
+## Public Activity
+
+```python
+def get_passport(address: str) -> Optional[str]:
+    if address[:14] == 'bostromvaloper':
+        address = str(Address(bytes(Address(address, prefix='bostromvaloper')), prefix='bostrom'))
+    try:
+        return query_contract(contract_address=PASSPORT_CONTRACT,
+                              query={"active_passport": {"address": address}},
+                              node_lcd_url=LCD_API)['data']['extension']['nickname']
+    except KeyError:
+        return None
+```
+
+The distribution is:
+
+```python
+def get_public_activity_endorsement(exist_passport: bool, validators_with_passports_cnt: int) -> int:
+    return int(exist_passport / validators_with_passports_cnt * ALLOCATION * PUBLIC_ACTIVITY)
 ```
 
 ## Black list

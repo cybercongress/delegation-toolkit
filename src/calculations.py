@@ -2,7 +2,7 @@ import math
 import pandas as pd
 
 from config import ALLOCATION, COST_OPTIMIZATION, DECENTRALIZATION, CONFIDENCE, RELIABILITY, SUPERINTELLIGENCE, \
-    VALIDATOR_SET
+    PUBLIC_ACTIVITY, VALIDATOR_SET
 
 
 def get_cost_optimization(commission: float) -> float:
@@ -139,6 +139,21 @@ def get_superintelligence_endorsement(
     return int((superintelligence / superintelligence_sum) * ALLOCATION * SUPERINTELLIGENCE)
 
 
+def get_public_activity_endorsement(
+        exist_passport: bool,
+        validators_with_passports_cnt: int) -> int:
+    """
+    Calculates public_activity_endorsement value
+    by validator's passport existing as share of validators_with_passports_cnt
+
+    :param exist_passport:
+    :param validators_with_passports_cnt:
+    :return public_activity_endorsement:
+    """
+    assert validators_with_passports_cnt > 0
+    return int(exist_passport / validators_with_passports_cnt * ALLOCATION * PUBLIC_ACTIVITY)
+
+
 def calculate_endorsement(validators_df: pd.DataFrame) -> pd.DataFrame:
     """
     Calculates cost_optimization, cost_endorsement,
@@ -189,10 +204,15 @@ def calculate_endorsement(validators_df: pd.DataFrame) -> pd.DataFrame:
         lambda x: get_reliability_endorsement(reliability=x['reliability'],
                                               reliability_sum=validators_df['reliability'].sum()),
         axis=1)
+    validators_df.to_csv('validators_test.csv')
+    validators_df.loc[:, 'public_activity_endorsement'] = validators_df.apply(
+        lambda x: get_public_activity_endorsement(exist_passport=x['exist_passport'],
+                                                  validators_with_passports_cnt=validators_df['exist_passport'].sum()),
+        axis=1)
     validators_df.loc[:, 'total'] = \
         validators_df['cost_endorsement'] + validators_df['decentralization_endorsement'] + \
         validators_df['confidence_endorsement'] + validators_df['reliability_endorsement'] + \
-        validators_df['superintelligence_endorsement']
+        validators_df['superintelligence_endorsement'] + validators_df['public_activity_endorsement']
     validators_df = validators_df.sort_values(by=['total'], ascending=False).reset_index(drop=True)
     return rebalance_to_set(validators_df, VALIDATOR_SET)
 

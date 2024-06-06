@@ -1,5 +1,10 @@
 # Delegation strategy for cyber~congress
 
+<p>
+    <a href="https://t.me/fameofcyber"><img alt="Python" src="https://img.shields.io/badge/telegram-fameofcyber-2CA5E0" href="fff"></a>
+    <img alt="Python" src="https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue">
+</p>
+
 The toolkit provides a delegation strategy for `bostrom` heroes from cyber~congress multisig.
 
 The aim is to build a strong hero set by endorsing their stake with cyber\~congress power. According to cyber\~congress values, decentralization, confidence, reliability, and superintelligence will be encouraged. Also, additional delegations from cyber~congress will help cover maintainance of validators running costs.
@@ -13,17 +18,18 @@ The result of the tool execution is a pivot table with all calculations in detai
 The allocation of the delegation strategy program is 135 TBOOT.
 
 ```python
-ALLOCATION = 135_000_000_000_000
+ALLOCATION = 137_420_000_000_000
 ```
 
 The criteria shares are:
 
 ```python
-COST_OPTIMIZATION = 0.30
+COST_OPTIMIZATION = 0.20
 DECENTRALIZATION = 0.20
 CONFIDENCE = 0.20
 RELIABILITY = 0.15
 SUPERINTELLIGENCE = 0.15
+PUBLIC_ACTIVITY = 0.10
 ```
 
 ```python
@@ -149,6 +155,34 @@ def get_reliability_endorsement(reliability, reliability_sum):
     return int((reliability / reliability_sum) * ALLOCATION * RELIABILITY)
 ```
 
+## Public Activity
+This criterion shows the public activity in the cybergraph. 
+[The moon passport](https://cyb.ai/citizenship) is the base namespace in Bostrom network and cybergraph.
+
+Here the public activity will be defined:
+- possession of a moon passport
+- posting logs for a last month `(in future epoches)`
+- sending messages in sence for a last month `(in future epoches)`
+
+```python
+def get_passport(address: str) -> Optional[str]:
+    if address[:14] == 'bostromvaloper':
+        address = str(Address(bytes(Address(address, prefix='bostromvaloper')), prefix='bostrom'))
+    try:
+        return query_contract(contract_address=PASSPORT_CONTRACT,
+                              query={"active_passport": {"address": address}},
+                              node_lcd_url=LCD_API)['data']['extension']['nickname']
+    except KeyError:
+        return None
+```
+
+The distribution is:
+
+```python
+def get_public_activity_endorsement(exist_passport: bool, validators_with_passports_cnt: int) -> int:
+    return int(exist_passport / validators_with_passports_cnt * ALLOCATION * PUBLIC_ACTIVITY)
+```
+
 ## Black list
 
 In that list heroes who are quitting will be placed.
@@ -191,9 +225,10 @@ The result of the script execution is .csv file with pivot table
 
 ## Example calculations
 
-[Here](./delegation_strategy.csv) is the result of script execution for 2022-05-17.
+[Here](./delegation_strategy.csv) is the result of script execution for the last epoch.
 
-## Signing transactions with the multisig
+## Signing transactions 
+### with the multisig
 You can learn how multisig works by CLI in the [guide](https://github.com/cybercongress/go-cyber/blob/main/docs/multisig_guide.md), 
 below are examples regarding transactions of this repository.
 
@@ -207,6 +242,9 @@ cyber tx multisign txs/unsigned_0.json $MULTISIG_NAME txs/signed_0_1.json txs/si
 ```
 3. Broadcast transaction
 ```bash
-cyber tx broadcast txs/signed_combined_0.json --chain-id=bostrom --node https://rpc.bostrom.cybernode.ai:443 --broadcast-mode block
+cyber tx broadcast txs/signed_combined_0.json --chain-id=bostrom --node https://rpc.bostrom.cybernode.ai:443
 ```
-        
+### with authz
+```bash
+ cyber tx authz exec txs/unsigned_0.json --from=$FROM_NAME --note='cyber~congress delegation strategy program https://github.com/cybercongress/delegation-toolkit' --chain-id=bostrom --gas=10000000 --node https://rpc.bostrom.cybernode.ai:443
+```

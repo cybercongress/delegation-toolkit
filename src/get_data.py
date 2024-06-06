@@ -1,9 +1,30 @@
 import requests
 import pandas as pd
 from tqdm import tqdm
+from typing import Optional
+from retry import retry
 
+from cyberutils.contract import query_contract
 from cyberpy._wallet import address_to_address
-from config import LCD_API, JAILED_WINDOW
+from cosmpy.crypto.address import Address
+from config import LCD_API, JAILED_WINDOW, PASSPORT_CONTRACT
+
+
+@retry(delay=3, tries=3, backoff=2, max_delay=8)
+def get_passport(address: str) -> Optional[str]:
+    """
+    get active moon passport name
+    :param address: validator operator address
+    :return: active passport name if it exists or None otherwise
+    """
+    if address[:14] == 'bostromvaloper':
+        address = str(Address(bytes(Address(address, prefix='bostromvaloper')), prefix='bostrom'))
+    try:
+        return query_contract(contract_address=PASSPORT_CONTRACT,
+                              query={"active_passport": {"address": address}},
+                              node_lcd_url=LCD_API)['data']['extension']['nickname']
+    except KeyError:
+        return None
 
 
 def get_validators() -> pd.DataFrame:
@@ -31,8 +52,9 @@ def get_validators() -> pd.DataFrame:
             get_power(validator['operator_address']),
             get_jailed_times(validator['operator_address'], min_height),
             get_jailed_times(validator['operator_address'], 2),
-            validator['jailed']
-        ) for validator in tqdm(res) if validator['jailed'] == False]
+            validator['jailed'],
+            True if get_passport(address=validator['operator_address']) is not None else False,
+        ) for validator in tqdm(res) if validator['jailed'] is False]
     return pd.DataFrame(result, columns=[
         'moniker',
         'operator_address',
@@ -44,6 +66,7 @@ def get_validators() -> pd.DataFrame:
         'jailed_times_100_000',
         'jailed_times_all',
         'isjailed',
+        'exist_passport'
     ])
 
 

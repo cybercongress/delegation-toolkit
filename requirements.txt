@@ -3,5 +3,5 @@ pandas>=1.4.2
 bech32>=1.2.0
 tqdm>=4.64.0
 cyberpy>=0.0.8
-cyberutils>=0.2.2
+cyberutils>=0.0.6
 cosmpy
